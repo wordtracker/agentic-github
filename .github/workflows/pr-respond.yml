@@ -56,17 +56,6 @@ jobs:
           PR_META: ${{ steps.context.outputs.pr_meta }}
           REVIEWS: ${{ steps.context.outputs.reviews }}
         run: |
-          SCHEMA='{
-            "type": "object",
-            "properties": {
-              "commit_message": { "type": "string" },
-              "pr_comment": { "type": "string" },
-              "back_off": { "type": "boolean" },
-              "back_off_reason": { "type": "string" }
-            },
-            "required": ["back_off"]
-          }'
-
           cat <<CTX_EOF > /tmp/context.txt
           PR metadata:
           $PR_META
@@ -79,32 +68,19 @@ jobs:
           PR number: $PR_NUMBER
           CTX_EOF
 
-          RESULT=$(cat /tmp/context.txt | claude -p --verbose \
+          cat /tmp/context.txt | claude -p --verbose \
             --allowedTools "Read" "Edit" "Write" "Glob" "Grep" \
-            --json-schema "$SCHEMA" \
-            "DRY RUN: Do NOT edit any files. Do NOT read any skill files. Just read the context piped to stdin and return JSON with back_off set to false, commit_message set to 'dry-run: no changes', and pr_comment set to a summary of the context you received (PR number, review state, whether you got PR metadata and reviews).")
+            "DRY RUN: Do NOT edit any files. Do NOT read any skill files. Just read the context piped to stdin. Write /tmp/back_off containing only 'true' or 'false'. Write /tmp/commit_message containing 'dry-run: no changes'. Write /tmp/pr_comment containing a summary of the context you received (PR number, review state, whether you got PR metadata and reviews)."
 
-          echo "result<<GHEOF" >> "$GITHUB_OUTPUT"
-          echo "$RESULT" >> "$GITHUB_OUTPUT"
-          echo "GHEOF" >> "$GITHUB_OUTPUT"
-
-      - name: Parse Claude output
+      - name: Read Claude outputs
         id: parse
         run: |
-          BACK_OFF=$(echo '${{ steps.claude.outputs.result }}' | jq -r '.back_off')
-          COMMIT_MSG=$(echo '${{ steps.claude.outputs.result }}' | jq -r '.commit_message // empty')
-          PR_COMMENT=$(echo '${{ steps.claude.outputs.result }}' | jq -r '.pr_comment // empty')
-          BACK_OFF_REASON=$(echo '${{ steps.claude.outputs.result }}' | jq -r '.back_off_reason // empty')
-
-          echo "back_off=$BACK_OFF" >> "$GITHUB_OUTPUT"
+          echo "back_off=$(cat /tmp/back_off)" >> "$GITHUB_OUTPUT"
           echo "commit_message<<GHEOF" >> "$GITHUB_OUTPUT"
-          echo "$COMMIT_MSG" >> "$GITHUB_OUTPUT"
+          cat /tmp/commit_message >> "$GITHUB_OUTPUT"
           echo "GHEOF" >> "$GITHUB_OUTPUT"
           echo "pr_comment<<GHEOF" >> "$GITHUB_OUTPUT"
-          echo "$PR_COMMENT" >> "$GITHUB_OUTPUT"
-          echo "GHEOF" >> "$GITHUB_OUTPUT"
-          echo "back_off_reason<<GHEOF" >> "$GITHUB_OUTPUT"
-          echo "$BACK_OFF_REASON" >> "$GITHUB_OUTPUT"
+          cat /tmp/pr_comment >> "$GITHUB_OUTPUT"
           echo "GHEOF" >> "$GITHUB_OUTPUT"
 
       - name: Commit and push (back-off)
