@@ -158,14 +158,6 @@ jobs:
           PR_META: ${{ steps.context.outputs.pr_meta }}
           COMMIT_LOG: ${{ steps.context.outputs.commit_log }}
         run: |
-          SCHEMA='{
-            "type": "object",
-            "properties": {
-              "commit_message": { "type": "string" }
-            },
-            "required": ["commit_message"]
-          }'
-
           cat <<CTX_EOF > /tmp/context.txt
           PR metadata:
           $PR_META
@@ -176,21 +168,15 @@ jobs:
           PR number: $PR_NUMBER
           CTX_EOF
 
-          RESULT=$(cat /tmp/context.txt | claude -p --verbose \
+          cat /tmp/context.txt | claude -p --verbose \
             --allowedTools "Read" "Glob" "Grep" \
-            --json-schema "$SCHEMA" \
-            "You are running autonomously in GitHub Actions WITHOUT a user present. You only have access to: Read, Glob, Grep. Do NOT attempt to run Bash, git, gh, or any tools that require permission — there is no user to approve them. Read /tmp/skills/skills/pr-merge/SKILL.md and follow its instructions. The context piped to stdin contains PR metadata, commit log, and PR number.")
+            "You are running autonomously in GitHub Actions WITHOUT a user present. You only have access to: Read, Glob, Grep. Do NOT attempt to run Bash, git, gh, or any tools that require permission — there is no user to approve them. Read /tmp/skills/skills/pr-merge/SKILL.md and follow its instructions. The context piped to stdin contains PR metadata, commit log, and PR number. Write the final squash commit message to /tmp/commit_message."
 
-          echo "result<<GHEOF" >> "$GITHUB_OUTPUT"
-          echo "$RESULT" >> "$GITHUB_OUTPUT"
-          echo "GHEOF" >> "$GITHUB_OUTPUT"
-
-      - name: Parse Claude output
+      - name: Read Claude outputs
         id: parse
         run: |
-          COMMIT_MSG=$(echo '${{ steps.claude.outputs.result }}' | jq -r '.commit_message')
           echo "commit_message<<GHEOF" >> "$GITHUB_OUTPUT"
-          echo "$COMMIT_MSG" >> "$GITHUB_OUTPUT"
+          cat /tmp/commit_message >> "$GITHUB_OUTPUT"
           echo "GHEOF" >> "$GITHUB_OUTPUT"
 
       - name: Squash-merge PR
