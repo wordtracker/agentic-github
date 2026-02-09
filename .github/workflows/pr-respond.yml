@@ -67,21 +67,22 @@ jobs:
             "required": ["back_off"]
           }'
 
-          PROMPT="You are running autonomously in GitHub Actions WITHOUT a user present. You only have access to: Read, Edit, Write, Glob, Grep. Do NOT attempt to run Bash, git, gh, or any tools that require permission — there is no user to approve them.
+          cat <<CTX_EOF > /tmp/context.txt
+          PR metadata:
+          $PR_META
 
-          Read /tmp/skills/skills/pr-respond/SKILL.md and follow its instructions.
+          Reviews:
+          $REVIEWS
 
-          PR metadata: $PR_META
-          Reviews: $REVIEWS
           Review state: $REVIEW_STATE
           Review body: $REVIEW_BODY
-          PR number: $PR_NUMBER"
+          PR number: $PR_NUMBER
+          CTX_EOF
 
-          RESULT=$(claude -p --verbose \
+          RESULT=$(cat /tmp/context.txt | claude -p --verbose \
             --allowedTools "Read" "Edit" "Write" "Glob" "Grep" \
-            --output-format json \
             --json-schema "$SCHEMA" \
-            "$PROMPT")
+            "DRY RUN: Do NOT edit any files. Do NOT read any skill files. Just read the context piped to stdin and return JSON with back_off set to false, commit_message set to 'dry-run: no changes', and pr_comment set to a summary of the context you received (PR number, review state, whether you got PR metadata and reviews).")
 
           echo "result<<GHEOF" >> "$GITHUB_OUTPUT"
           echo "$RESULT" >> "$GITHUB_OUTPUT"
@@ -189,19 +190,20 @@ jobs:
             "required": ["commit_message"]
           }'
 
-          PROMPT="You are running autonomously in GitHub Actions WITHOUT a user present. You only have access to: Read, Glob, Grep. Do NOT attempt to run Bash, git, gh, or any tools that require permission — there is no user to approve them.
+          cat <<CTX_EOF > /tmp/context.txt
+          PR metadata:
+          $PR_META
 
-          Read /tmp/skills/skills/pr-merge/SKILL.md and follow its instructions.
+          Commit log:
+          $COMMIT_LOG
 
-          PR metadata: $PR_META
-          Commit log: $COMMIT_LOG
-          PR number: $PR_NUMBER"
+          PR number: $PR_NUMBER
+          CTX_EOF
 
-          RESULT=$(claude -p --verbose \
+          RESULT=$(cat /tmp/context.txt | claude -p --verbose \
             --allowedTools "Read" "Glob" "Grep" \
-            --output-format json \
             --json-schema "$SCHEMA" \
-            "$PROMPT")
+            "You are running autonomously in GitHub Actions WITHOUT a user present. You only have access to: Read, Glob, Grep. Do NOT attempt to run Bash, git, gh, or any tools that require permission — there is no user to approve them. Read /tmp/skills/skills/pr-merge/SKILL.md and follow its instructions. The context piped to stdin contains PR metadata, commit log, and PR number.")
 
           echo "result<<GHEOF" >> "$GITHUB_OUTPUT"
           echo "$RESULT" >> "$GITHUB_OUTPUT"
