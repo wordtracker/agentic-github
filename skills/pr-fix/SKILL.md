@@ -13,7 +13,7 @@ You are running in a GitHub Actions VM. The user is not present, so you cannot a
 
 PR metadata, review comments, and commit history are provided in your prompt.
 
-Please be mindful of credits. There is normally no need to create a plan or spawn other agents.
+**Cost constraint**: Every tool call costs money. Do not explore the codebase broadly. Only read files that are directly referenced in the review comments, the plan, or progress.txt. Do not use Glob or Grep to survey the codebase. Do not create plans or spawn agents.
 
 ## Process
 
