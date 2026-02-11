@@ -11,7 +11,7 @@ You are running in a GitHub Actions VM. The workflow provides the full PR contex
 
 ## Process
 
-Read the review content provided in your prompt. Determine whether the reviewer is signaling that a human will take over. Use your judgement. Examples:
+Read the CURRENT review content provided in your prompt. Determine whether the reviewer is signaling that a human will take over. Use your judgement. Examples:
 
 - "I'll fix this myself"
 - "Human will handle this"
@@ -21,6 +21,8 @@ Read the review content provided in your prompt. Determine whether the reviewer 
 - Any natural language that clearly means "stop"
 
 A normal code review requesting changes (e.g. "please rename this variable", "add error handling here") is NOT a back-off signal, unless also accompanied by natural language indicating the AI should stop or a human should pick up the work instead.
+
+Do not take into account a reviewer asking an AI to stop in past reviews, only the most recent one.
 
 ## Output
 
