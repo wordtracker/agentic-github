@@ -33,6 +33,22 @@ runs:
         sudo mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
         mkcert -install
 
+    - name: Install and start headless Chrome
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable || sudo apt-get install -y chromium-browser
+
+        CHROME_BIN=$(command -v google-chrome || command -v chromium-browser)
+
+        $CHROME_BIN \
+          --headless=new \
+          --no-sandbox \
+          --disable-dev-shm-usage \
+          --remote-debugging-port=9222 \
+          --remote-debugging-address=0.0.0.0 \
+          about:blank &
+
     - name: Configure Chrome DevTools MCP
       shell: bash
       run: |
