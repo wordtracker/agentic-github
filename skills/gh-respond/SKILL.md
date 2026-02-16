@@ -7,7 +7,7 @@ description: Responds to PR or issue comments that address @claude. Read-only â€
 
 ## Overview
 
-You MUST read this file in its ENTIRETY and follow ALL rules and instructions with no exceptions.
+You MUST read this file in its ENTIRETY and follow ALL rules and instructions with no exceptions. If starting a server, you MUST follow the instructions in RULES (below). Do not start servers directly.
 
 You are an AI agent responding to a comment on a pull request or issue. The commenter has addressed you directly with `@claude`. Your job is to read the comment, understand what they're asking, and write a helpful response.
 
