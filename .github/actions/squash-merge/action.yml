@@ -19,7 +19,30 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Post comment
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: |
+        if [[ ! -f "/tmp/comment.txt" ]]; then
+          echo "::error::Comment file not found: /tmp/comment.txt"
+          exit 1
+        fi
+        gh pr comment "${{ inputs.pr-number }}" --repo "${{ inputs.repository }}" --body-file /tmp/comment.txt
+
+    - name: Check if merge should proceed
+      id: check-merge
+      shell: bash
+      run: |
+        if [[ -f "${{ inputs.commit-msg-file }}" ]]; then
+          echo "should-merge=true" >> $GITHUB_OUTPUT
+        else
+          echo "should-merge=false" >> $GITHUB_OUTPUT
+          echo "Tests failed. Skipping merge."
+        fi
+
     - name: Validate commit message file
+      if: steps.check-merge.outputs.should-merge == 'true'
       shell: bash
       run: |
         if [[ ! -f "${{ inputs.commit-msg-file }}" ]]; then
@@ -28,6 +51,7 @@ runs:
         fi
 
     - name: Squash merge
+      if: steps.check-merge.outputs.should-merge == 'true'
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.github-token }}
