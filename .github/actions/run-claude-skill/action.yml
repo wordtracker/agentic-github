@@ -23,7 +23,7 @@ inputs:
   allowed-tools:
     description: 'Space-separated list of allowed tools for Claude'
     required: false
-    default: '"Read" "Edit" "Write" "echo" "cat" "Bash(curl *)" "Bash(/tmp/skills/bin/bg *)" "Bash(/tmp/skills/bin/bg-stop *)" "Bash(npm install *)" "Bash(npm uninstall *)" "Bash(pnpm add *)" "Bash(pnpm remove *)" "Bash(yarn add *)" "Bash(yarn remove *)" "mcp__chrome-devtools__*"'
+    default: '"Read" "Edit" "Write" "echo *" "cat *" "Bash(curl *)" "Bash(/tmp/skills/bin/bg *)" "Bash(/tmp/skills/bin/bg-stop *)" "Bash(npm install *)" "Bash(npm uninstall *)" "Bash(pnpm add *)" "Bash(pnpm remove *)" "Bash(yarn add *)" "Bash(yarn remove *)" "mcp__chrome-devtools__*"'
 
 runs:
   using: composite
