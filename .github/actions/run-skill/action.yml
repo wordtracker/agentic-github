@@ -53,7 +53,7 @@ runs:
 
     - name: Clone skills repo
       shell: bash
-      run: git clone https://github.com/${{ github.repository_owner }}/agentic.git /tmp/skills
+      run: git clone https://github.com/${{ github.action_repository }}.git /tmp/skills
 
     - name: Install Claude CLI
       shell: bash
