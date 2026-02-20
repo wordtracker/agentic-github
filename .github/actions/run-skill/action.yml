@@ -23,7 +23,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: chriswickett/agentic/.github/actions/inject-env@main
+    - uses: ./.github/actions/inject-env
       with:
         secrets-json: ${{ inputs.secrets-json }}
         vars-json: ${{ inputs.vars-json }}

@@ -13,7 +13,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: chriswickett/agentic/.github/actions/run-skill@main
+    - uses: ./.github/actions/run-skill
       with:
         skill-name: pr-fix
         context-type: pr
@@ -21,13 +21,13 @@ runs:
         secrets-json: ${{ inputs.secrets-json }}
         vars-json: ${{ inputs.vars-json }}
 
-    - uses: chriswickett/agentic/.github/actions/git-commit-push@main
+    - uses: ./.github/actions/git-commit-push
       with:
         github-token: ${{ env.AGENTIC_BOT_TOKEN }}
         bot-name: ${{ env.AGENTIC_BOT_NAME }}
         bot-email: ${{ env.AGENTIC_BOT_EMAIL }}
 
-    - uses: chriswickett/agentic/.github/actions/post-comment@main
+    - uses: ./.github/actions/post-comment
       with:
         issue-number: ${{ github.event.pull_request.number }}
         repository: ${{ github.repository }}

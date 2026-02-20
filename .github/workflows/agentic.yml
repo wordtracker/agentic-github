@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: chriswickett/agentic/.github/actions/gh-respond@main
+      - uses: ./.github/actions/gh-respond
         with:
           secrets-json: ${{ toJSON(secrets) }}
           vars-json: ${{ toJSON(vars) }}
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: chriswickett/agentic/.github/actions/pr-start@main
+      - uses: ./.github/actions/pr-start
         with:
           secrets-json: ${{ toJSON(secrets) }}
           vars-json: ${{ toJSON(vars) }}
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: chriswickett/agentic/.github/actions/pr-fix@main
+      - uses: ./.github/actions/pr-fix
         with:
           secrets-json: ${{ toJSON(secrets) }}
           vars-json: ${{ toJSON(vars) }}
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: chriswickett/agentic/.github/actions/pr-merge@main
+      - uses: ./.github/actions/pr-merge
         with:
           secrets-json: ${{ toJSON(secrets) }}
           vars-json: ${{ toJSON(vars) }}

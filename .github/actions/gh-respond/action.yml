@@ -25,14 +25,14 @@ runs:
           echo "type=issue" >> $GITHUB_OUTPUT
         fi
 
-    - uses: chriswickett/agentic/.github/actions/run-skill@main
+    - uses: ./.github/actions/run-skill
       with:
         skill-name: gh-respond
         context-type: ${{ steps.context.outputs.type }}
         secrets-json: ${{ inputs.secrets-json }}
         vars-json: ${{ inputs.vars-json }}
 
-    - uses: chriswickett/agentic/.github/actions/post-comment@main
+    - uses: ./.github/actions/post-comment
       with:
         issue-number: ${{ github.event.issue.number }}
         repository: ${{ github.repository }}
